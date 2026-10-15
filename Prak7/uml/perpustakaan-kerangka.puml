@@ -1,0 +1,144 @@
+@startuml perpustakaan-class
+title Sistem Perpustakaan — Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package model {
+  abstract class Koleksi {
+    - nomorInduk : String
+    - judul : String
+    - penulis : String
+    - tahun : int
+    - jumlahEksemplar : int
+    - eksemplarTersedia : int
+    - status : StatusKoleksi
+    + {abstract} masaPinjamHari() : int
+    + {abstract} bolehDipinjam() : boolean
+    + tersedia() : boolean
+    + pinjamEksemplar() : void
+    + kembalikanEksemplar() : void
+    + tambahEksemplar() : void
+    + ubahStatus(statusBaru : StatusKoleksi) : void
+    + getNomorInduk() : String
+    + getJudul() : String
+    + getTahun() : int
+    + getJumlahEksemplar() : int
+    + getEksemplarTersedia() : int
+    + getStatus() : StatusKoleksi
+  }
+
+  class Buku {
+    - bab : List<Bab>
+    + tambahBab(nomor : int, judulBab : String) : void
+    + getBab() : List<Bab>
+    + kurangiStok() : void
+    + tambahStok() : void
+    + masaPinjamHari() : int
+    + bolehDipinjam() : boolean
+  }
+
+  class Majalah {
+    + masaPinjamHari() : int
+    + bolehDipinjam() : boolean
+  }
+
+  class Skripsi {
+    + masaPinjamHari() : int
+    + bolehDipinjam() : boolean
+  }
+
+  class Bab <<nested, constructor private>> {
+    - nomor : int
+    - judul : String
+  }
+
+  class Anggota {
+    - nomorAnggota : String
+    - nama : String
+    - jenisKeanggotaan : JenisKeanggotaan
+    - riwayatPeminjaman : List<Peminjaman>
+    + pinjam(koleksi : Koleksi, tanggalPinjam : LocalDate) : Peminjaman
+    + kembalikan(transaksi : Peminjaman, tanggalKembali : LocalDate) : void
+    + getRiwayatPeminjaman() : List<Peminjaman>
+    + getNomorAnggota() : String
+    + getNama() : String
+    + getJenisKeanggotaan() : JenisKeanggotaan
+  }
+
+  class Peminjaman {
+    - anggota : Anggota
+    - koleksi : Koleksi
+    - tanggalPinjam : LocalDate
+    - tanggalJatuhTempo : LocalDate
+    - tanggalKembali : LocalDate
+    ~ kembalikan(tanggal : LocalDate) : void
+    + hitungHariTerlambat(tanggalEvaluasi : LocalDate) : long
+    + hitungDenda(tanggalEvaluasi : LocalDate) : long
+    + isAktif() : boolean
+    + getTanggalPinjam() : LocalDate
+    + getTanggalJatuhTempo() : LocalDate
+    + getTanggalKembali() : LocalDate
+  }
+
+  enum StatusKoleksi {
+    TERSEDIA
+    DIPINJAM
+    RUSAK
+    HILANG
+  }
+
+  interface JenisKeanggotaan {
+    + dendaPerHari() : long
+  }
+
+  enum KeanggotaanStandar {
+    MAHASISWA
+    DOSEN
+    KEHORMATAN
+    - dendaPerHari : long
+    + dendaPerHari() : long
+  }
+
+  Koleksi <|-- Buku
+  Koleksi <|-- Majalah
+  Koleksi <|-- Skripsi
+  Buku "1" *-- "0..*" Bab : memiliki
+  Anggota "1" *-- "0..*" Peminjaman : riwayat
+  Peminjaman "0..*" --> "1" Koleksi : untuk
+  Anggota --> JenisKeanggotaan : menggunakan
+  JenisKeanggotaan <|.. KeanggotaanStandar
+}
+
+package service {
+  class PerpustakaanService {
+    - koleksi : Map<String, Koleksi>
+    - anggota : Map<String, Anggota>
+    + tambahKoleksi(k : Koleksi) : void
+    + daftarkanAnggota(a : Anggota) : void
+    + pinjam(nomorAnggota : String, nomorInduk : String) : Peminjaman
+    + kembalikan(nomorAnggota : String, nomorInduk : String) : void
+    + cariKoleksi(nomorInduk : String) : Koleksi
+    + cariKoleksiByKataKunci(kataKunci : String) : List<Koleksi>
+    + getDaftarKoleksiYangSedangDipinjam() : List<Peminjaman>
+    + getRiwayatPeminjaman(nomorAnggota : String) : List<Peminjaman>
+    + getKoleksi() : List<Koleksi>
+  }
+
+  PerpustakaanService "1" o-- "0..*" Koleksi : mengelola
+  PerpustakaanService "1" o-- "0..*" Anggota : mendaftarkan
+  PerpustakaanService ..> Peminjaman : memulai transaksi
+}
+
+note right of Bab
+  Bab dibuat di dalam Buku.
+  Di Java, Bab merupakan kelas bersarang
+  dengan constructor privat.
+end note
+
+note bottom of JenisKeanggotaan
+  Interface ini memungkinkan jenis keanggotaan
+  baru menyediakan tarif dendanya sendiri.
+end note
+
+@enduml
