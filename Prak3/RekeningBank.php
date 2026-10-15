@@ -7,16 +7,19 @@ declare(strict_types=1);
  */
 class RekeningBank
 {
-    // TODO 1: ganti angka ajaib berikut menjadi konstanta bernama.
-    //   bunga tahunan 0.025 · biaya admin 5000 · batas penarikan 5000000
+    // TODO 1: konstanta bernama (tidak ada lagi angka ajaib di badan method)
+    public const BUNGA_TAHUNAN = 0.025;
+    public const BIAYA_ADMIN = 5000;
+    public const BATAS_PENARIKAN_SEKALI = 5000000;
 
-    // TODO 2: deklarasikan properti statis penghitung jumlah rekening.
+    // TODO 2: properti statis penghitung jumlah rekening
+    private static int $jumlahRekening = 0;
 
     private float $saldo;
 
     /**
      * Default parameter menggantikan constructor overloading.
-     * TODO 3: lengkapi validasi nomor kosong dan saldo awal negatif.
+     * TODO 3: validasi nomor kosong dan saldo awal negatif.
      * TODO 4: naikkan penghitung jumlah rekening.
      */
     public function __construct(
@@ -24,44 +27,71 @@ class RekeningBank
         private readonly string $pemilik,
         float $saldoAwal = 0,
     ) {
+        // TODO 3
+        if (trim($nomor) === '') {
+            throw new InvalidArgumentException('Nomor rekening tidak boleh kosong');
+        }
+        if ($saldoAwal < 0) {
+            throw new InvalidArgumentException('Saldo awal tidak boleh negatif');
+        }
+
         $this->saldo = $saldoAwal;
+
+        // TODO 4
+        self::$jumlahRekening++;
     }
 
     /**
      * TODO 5: named constructor — rekening pelajar, saldo awal nol.
-     *         Gunakan `new static()`, BUKAN `new self()`.
-     *         Alasannya ada di modul teori pertemuan 3 (LateBinding.php).
+     *         Memakai `new static()`, BUKAN `new self()`, agar subclass
+     *         yang memanggil factory ini mendapat objek bertipe subclass
+     *         itu (late static binding).
      */
     public static function rekeningPelajar(string $nomor, string $pemilik): static
     {
-        throw new RuntimeException('TODO 5 belum dikerjakan');
+        return new static($nomor, $pemilik, 0);
     }
 
     public function setor(float $jumlah): void
     {
         // TODO 6
+        if ($jumlah <= 0) {
+            throw new InvalidArgumentException('Jumlah setoran harus lebih dari 0');
+        }
+        $this->saldo += $jumlah;
     }
 
     public function tarik(float $jumlah): void
     {
-        // TODO 7: tolak <= 0, tolak melebihi saldo, tolak melebihi batas sekali tarik.
+        // TODO 7
+        if ($jumlah <= 0) {
+            throw new InvalidArgumentException('Jumlah penarikan harus lebih dari 0');
+        }
+        if ($jumlah > $this->saldo) {
+            throw new RuntimeException('Jumlah penarikan melebihi saldo');
+        }
+        if ($jumlah > self::BATAS_PENARIKAN_SEKALI) {
+            throw new RuntimeException('Jumlah penarikan melebihi batas transaksi');
+        }
+        $this->saldo -= $jumlah;
     }
 
-    /** TODO 8 */
+    /** TODO 8: kurangi saldo sebesar biaya admin, tetapi jangan sampai negatif. */
     public function potongBiayaAdmin(): void
     {
+        $this->saldo = max(0.0, $this->saldo - self::BIAYA_ADMIN);
     }
 
-    /** TODO 9 */
+    /** TODO 9: jumlah rekening yang pernah dibuat. */
     public static function getJumlahRekening(): int
     {
-        return -1;   // ganti
+        return self::$jumlahRekening;
     }
 
-    /** TODO 10 */
+    /** TODO 10: method statis utilitas, tidak membaca keadaan objek mana pun. */
     public static function bungaSetahun(float $pokok): float
     {
-        return 0;   // ganti
+        return $pokok * self::BUNGA_TAHUNAN;
     }
 
     public function getSaldo(): float { return $this->saldo; }
