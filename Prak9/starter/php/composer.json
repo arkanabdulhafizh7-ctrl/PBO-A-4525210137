@@ -1,0 +1,19 @@
+{
+  "name": "univpancasila/perpustakaan",
+  "description": "Sistem Perpustakaan - Praktikum PBO sesi 9",
+  "type": "project",
+  "require": {
+    "php": ">=8.2",
+    "nesbot/carbon": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Perpustakaan\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Perpustakaan\\Tests\\": "tests/"
+    }
+  }
+}
