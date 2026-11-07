@@ -1,0 +1,19 @@
+{
+  "name": "perpustakaan/aplikasi",
+  "description": "Aplikasi perpustakaan sederhana untuk latihan exception dan refactoring",
+  "type": "project",
+  "require": {
+    "php": ">=8.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Perpustakaan\\": "src/",
+      "Perpustakaan\\Exception\\": "src/exception/",
+      "Perpustakaan\\Model\\": "src/model/",
+      "Perpustakaan\\Service\\": "src/services/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

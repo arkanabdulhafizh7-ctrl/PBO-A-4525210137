@@ -1,0 +1,44 @@
+Prak10/
+|-- images/
+|   |-- (screenshot hasil running Java dan PHP)
+|
+|-- java/
+|   |-- pom.xml
+|   |-- skenario-uji.md
+|   |-- struktur.txt
+|   |-- src/
+|   |   |-- main/java/id/ac/univpancasila/perpustakaan/
+|   |       |-- exception/
+|   |       |   |-- PerpustakaanException.java
+|   |       |   |-- AnggotaTidakDitemukanException.java
+|   |       |   |-- BatasPinjamTerlampauiException.java
+|   |       |   |-- BukuSedangDipinjamException.java
+|   |       |   |-- BukuTidakDitemukanException.java
+|   |       |-- model/
+|   |       |-- service/
+|   |       |   |-- LibraryService.java
+|   |       |   |-- LibraryServiceKotor.java
+|   |       |   |-- PerpustakaanService.java
+|   |       |-- util/
+|   |           |-- Main.java
+|   |-- target/            (hasil build Maven, dibuat otomatis)
+|
+|-- php/
+|   |-- composer.json
+|   |-- composer.lock
+|   |-- laporan_buku.txt   (hasil ekspor saat main.php dijalankan)
+|   |-- src/
+|       |-- main.php
+|       |-- exception/
+|       |   |-- PerpustakaanException.php
+|       |   |-- AnggotaTidakDitemukanException.php
+|       |   |-- BatasPinjamTerlampauiException.php
+|       |   |-- BukuSedangDipinjamException.php
+|       |   |-- BukuTidakDitemukanException.php
+|       |-- services/
+|       |   |-- LibraryService.php
+|       |   |-- LibraryServiceKotor.php
+|       |-- test/
+|           |-- LibraryServiceTest.php
+|
+|-- README.md
